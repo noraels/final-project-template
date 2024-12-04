@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Library</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: rgb(41, 14, 14);
+    }
+    
+    /* Library Header */
+    .library-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        background-color: #612f2f;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        background-color: rgb(41, 14, 14);
+        color: white; 
+    }
+    
+    .main-content {
+        width: 83%;
+        margin-left: 15%;
+    }
+    
+    .search-container {
+            display: flex;
+            align-items: center;
+        }
+
+        #search {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #612f2f;
+        }
+    
+    button {
+        padding: 10px;
+        background-color: #64462a;
+        color: white;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+    
+    button:hover {
+        background-color: #9b6f44;
+    }
+    
+    .book-stats {
+        display: flex;
+        align-items: center;
+    }
+    
+    .book-stats h2 {
+        margin-right: 10px;
+    }
+    
+    .sort-filter {
+        display: flex;
+        align-items: center;
+    }
+    
+    .sort-options select,
+    button {
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        margin-left: 10px;
+    }
+    
+    /* Alphabet Bar */
+    .alphabet-bar {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 10px;
+        background-color: #64462a;
+        margin-bottom: 10px;
+    }
+    
+    .alphabet-bar span {
+        padding: 10px;
+        margin: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        color: #460012;
+    }
+    
+    .alphabet-bar span:hover {
+        background-color: #9b6f44;
+        border-radius: 5px;
+    }
+    
+    .bookshelf-background-container {
+        display: flex;
+        flex-direction: column; 
+        gap: 0px; 
+}
+
+.books {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 20px;  
+    justify-content: flex-start;  
+    position: absolute;  
+    top: 20px;  
+    left: 20px; 
+    right: 20px; 
+    bottom: 20px;  
+}
+
+    .shelf-background {
+    background-image: url('../../images/shelf.png');  
+    background-size: 100% 100%;
+    background-position: center;
+    height: 130vh; 
+    width: 100%;  
+    position: relative;  
+    display: flex;
+    align-items: center;
+    justify-content: center;  /* Center books inside the shelf */
+    margin-bottom: -679px;
+}
+
+.book-item {
+    width: 130px; 
+    height: 190px;  
+    text-align: center;
+    border: 1px solid rgb(51, 22, 22);
+    border-radius: 5px;
+    background-color: rgb(51, 22, 22);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: 45px;
+    margin-right: 30px;
+    position: relative; 
+    overflow: hidden; 
+}
+
+.book-item img {
+    width: 100%;  
+    height: 100%;
+    object-fit: contain;  
+    border-radius: 5px;
+    margin-top: 5px;
+}
+.book-item:hover img {
+    opacity: 0.6;  
+}
+
+.book-item .buttons {
+    position: absolute;  
+    top: 50%;  
+    left: 50%;  
+    transform: translate(-50%, -50%); 
+    opacity: 0;  
+    visibility: hidden;  
+    transition: opacity 0.3s ease, visibility 0.3s ease; 
+    display: flex;
+    flex-direction: column; 
+    gap: 10px;  
+}
+
+.book-item:hover .buttons {
+    opacity: 1;  
+    visibility: visible;  
+}
+
+.book-item .buttons button {
+    background-color: #64462a;
+    color: white;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.book-item .buttons button:hover {
+    background-color: #9b6f44;
+}
+    /* Sidebar */
+    .sidebar {
+        background-color: #96673b;
+        padding: 20px;
+        padding-top: 10px;
+        width: 12%;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        color: #460012;
+        overflow-y: auto;
+        height: 100vh; 
+    }
+    
+    .sidebar-search {
+        display: flex;
+        flex-direction: column;  
+        justify-content: center; 
+        align-items: center;    
+        margin-top: 20px; 
+        position: relative;       
+    }
+    
+    #sidebar-search {
+        padding: 8px;
+        font-size: 16px;
+        border-radius: 5px;
+        width: 175px;
+        margin-bottom: 5px;
+    }
+    
+    button {
+        padding: 8px;
+        background-color: #64462a;
+        color: white;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    /* Search Dropdown */
+    .search-dropdown {
+        position: fixed;
+        margin-top: 150px;  /* Position directly below the search bar */
+        left: 0;
+        background-color: white;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        display: none;  /* Initially hidden */
+        z-index: 1000;  /* Ensure it appears above other content */
+        max-height: 300px;  /* Limit the height */
+        overflow-y: auto;  /* Scrollable if too many results */
+    }
+    
+    .search-dropdown .book-item {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        cursor: pointer;
+        width: 400px; 
+    
+    }
+    
+    .search-dropdown .book-item:hover {
+        background-color: #f0f0f0;
+    }
+    
+    .search-dropdown img {
+        width: 70px;
+        height: 75px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+    
+    #search {
+        padding: 8px;
+        font-size: 14px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        width: 80%;
+        margin-top: 100px;
+    }
+    
+    #search-btn {
+        padding: 8px;
+        background-color: #64462a;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    #search-btn:hover {
+        background-color: #9b6f44;
+    }
+    
+    /* Sidebar Styling */
+    .sidebar h2 {
+        margin-bottom: 20px;
+    }
+    
+    .sidebar ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    
+    .sidebar li {
+        margin: 10px 0;
+    }
+    
+    .sidebar li a {
+        text-decoration: none;
+        color: #333;
+        font-size: 16px;
+        color: rgb(40, 23, 23); 
+    }
+    
+    .sidebar li a:hover {
+        color: #000500;
+    }
+    
+    /* Basic styling for the input and button */
+    #create-library-container {
+        margin-top: 10px;
+    }
+    
+    #create-library-container input {
+        padding: 5px;
+        font-size: 14px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    #create-library-container button {
+        padding: 5px 10px;
+        background-color: #460012;
+        color: white;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    #create-library-container button:hover {
+        background-color: #63091f;
+    }
+    
+        </style>
+    
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <ul id="library-list">
+            <!-- The link for the "Home" button to go back to the homepage -->
+            <li><a href="homepage.html">Home</a></li>
+        </ul>
+
+        <h2>Add a Book</h2>
+        <div class="sidebar-search">
+            <input type="text" placeholder="Search Books" id="sidebar-search">
+            <button id="search-btn">Search</button>
+        </div>    
+    </div>
+    <!-- Display the search results as a dropdown -->
+    <div id="search-results" class="search-dropdown">
+        <!-- Results will be shown here dynamically -->
+    </div>    
+    <div class="main-content">
+        <!-- Library Header -->
+        <div class="library-header">
+            <div class="search-container">
+                <input type="text" placeholder="Search Your Books..." id="main-search">
+                <button id="main-search-btn">Search</button>
+            </div>
+            <div class="book-stats">
+                <h1><span id="library-name">Library Name </span></h1>
+            </div>
+            <div class="sort-filter">
+                <div class="sort-options">
+                    <select>
+                        <option>Cover</option>
+                        <option>Title</option>
+                    </select>
+                </div>
+                <button>Filters</button>
+            </div>
+        </div>
+
+        <!-- Alphabet Bar -->
+        <div class="alphabet-bar">
+            <span>A</span><span>B</span><span>C</span><span>D</span>
+            <span>E</span><span>F</span><span>G</span><span>H</span>
+            <span>I</span><span>J</span><span>K</span><span>L</span>
+            <span>M</span><span>N</span><span>O</span><span>P</span>
+            <span>Q</span><span>R</span><span>S</span><span>T</span>
+            <span>U</span><span>V</span><span>W</span><span>X</span>
+            <span>Y</span><span>Z</span><span>#</span>
+        </div>
+
+        <div class="bookshelf-background-container" id="bookshelf-container">
+            <!-- Default Shelf -->
+            <div class="shelf-background">
+                <div class="books" id="book-list-1">
+                    <!-- Books will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+        
+    
+        
+    </div>
+
+    <script src="../../js/libraryPage.js"></script>
+</body>
+</html>

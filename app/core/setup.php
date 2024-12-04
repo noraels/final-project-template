@@ -1,15 +1,20 @@
 <?php
 
-//require our files, remember should be relative to index.php
+// Require core files and setup environment variables
 require '../app/core/Router.php';
 require '../app/models/Model.php';
 require '../app/controllers/Controller.php';
 require '../app/controllers/MainController.php';
 require '../app/controllers/UserController.php';
+require '../app/controllers/AuthController.php';
+require '../app/controllers/LibraryController.php';
+require '../app/controllers/BookController.php';
 require '../app/models/User.php';
+require '../app/models/Library.php';
+require '../app/models/Book.php';
+require '../app/core/AuthHelper.php';
 
-
-//set up env variables
+// Set up env variables
 $env = parse_ini_file('../.env');
 
 define('DBNAME', $env['DBNAME']);
@@ -18,5 +23,5 @@ define('DBUSER', $env['DBUSER']);
 define('DBPASS', $env['DBPASS']);
 define('DBDRIVER', '');
 
-//set up other configs
+// Set up other configs
 define('DEBUG', true);

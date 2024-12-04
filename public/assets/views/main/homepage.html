@@ -1,12 +1,478 @@
-<html>
-    <head>
-        <!-- remember to route relative to index.php  -->
-        <script type="text/javascript" src="./assets/js/homepage.js"></script>
-        <link rel="stylesheet" href="./assets/styles/homepage.css">
-    </head>
+<!DOCTYPE html>
+<html lang="en">
 
-    <body>
-        <p>homepage!</p>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Library</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: rgb(41, 14, 14);
+        }
+
+        /* Library Header */
+        .library-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #612f2f;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: rgb(41, 14, 14);
+            color: white;
+        }
+
+        .main-content {
+            width: 83%;
+            margin-left: 17%;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+
+        #search {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #612f2f;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #64462a;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        button:hover {
+            background-color: #9b6f44;
+        }
+
+        .book-stats {
+            display: flex;
+            align-items: center;
+        }
+
+        .book-stats h2 {
+            margin-right: 10px;
+        }
+
+        .sort-filter {
+            display: flex;
+            align-items: center;
+        }
+
+        .sort-options select,
+        button {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+
+        /* Alphabet Bar */
+        .alphabet-bar {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 10px;
+            background-color: #64462a;
+            margin-bottom: 10px;
+        }
+
+        .alphabet-bar span {
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #460012;
+        }
+
+        .alphabet-bar span:hover {
+            background-color: #9b6f44;
+            border-radius: 5px;
+        }
+
+        .bookshelf-background-container {
+        display: flex;
+        flex-direction: column;  /* Stack shelves vertically */
+        gap: 0px;  /* Space between shelves */
+}
+
+.books {
+    display: flex;
+    flex-wrap: wrap;  
+    gap: 20px; 
+    justify-content: flex-start;  
+    position: absolute;  
+    top: 20px; 
+    left: 20px;  
+    right: 20px;  
+    bottom: 20px;  
+}
+
+    .shelf-background {
+    background-image: url('../../images/shelf.png');  /* Shelf background image */
+    background-size: 100% 100%;
+    background-position: center;
+    height: 130vh;  
+    width: 100%; 
+    position: relative; 
+    display: flex;
+    align-items: center;
+    justify-content: center;  
+    margin-bottom: -679px;
+}
+
+.book-item {
+    width: 130px;  /* Width for each book */
+    height: 190px;  /* Height for each book */
+    text-align: center;
+    border: 1px solid rgb(51, 22, 22);
+    border-radius: 5px;
+    background-color: rgb(51, 22, 22);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: 45px;
+    margin-right: 30px;
+    position: relative; 
+    overflow: hidden;  
+}
+
+.book-item img {
+    width: 100%;  
+    height: 100%;
+    object-fit: contain; 
+    border-radius: 5px;
+    margin-top: 5px;
+}
+.book-item:hover img {
+    opacity: 0.6;  /* Fade the image when hovered */
+}
+
+.book-item .buttons {
+    position: absolute; 
+    top: 50%;  
+    left: 50%;  
+    transform: translate(-50%, -50%);  
+    opacity: 0;  
+    visibility: hidden;  
+    transition: opacity 0.3s ease, visibility 0.3s ease;  
+    display: flex;
+    flex-direction: column;  
+    gap: 10px;  
+}
+
+.book-item:hover .buttons {
+    opacity: 1; 
+    visibility: visible; 
+}
+
+.book-item .buttons button {
+    background-color: #64462a;
+    color: white;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.book-item .buttons button:hover {
+    background-color: #9b6f44;
+}
+        /* Sidebar */
+        .sidebar {
+            background-color: #96673b;
+            padding: 20px;
+            padding-top: 10px;
+            width: 14%;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            color: #460012;
+            overflow-y: auto;
+        }
+
+        /* Sidebar Styling */
+        .sidebar h2 {
+            margin-bottom: 20px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar li {
+            margin: 10px 0;
+        }
+
+        .sidebar li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            color: rgb(40, 23, 23);
+        }
+
+        .sidebar li a:hover {
+            color: #000500;
+        }
+
+        /* Basic styling for the input and button */
+        #create-library-container {
+            margin-top: 10px;
+        }
+
+        #create-library-container input {
+            padding: 5px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        #create-library-container button {
+            padding: 5px 10px;
+            background-color: #460012;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #create-library-container button:hover {
+            background-color: #63091f;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>My Libraries</h2>
+        <ul id="library-list">
+        </ul>
+        <button id="create-library-link">Create New Library</button>
+        <div id="create-library-container" style="display: none;">
+            <input type="text" id="new-library-name" placeholder="Enter Library Name">
+            <button id="create-library-btn">Create Library</button>
+        </div>
+        <h2>Browse</h2>
+        <ul>
+            <li><a href="#">Books</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <!-- Library Header -->
+        <div class="library-header">
+            <div class="search-container">
+                <input type="text" placeholder="Start Searching..." id="search">
+                <button>Search</button>
+            </div>
+            <div class="book-stats">
+                <h2>My Books</h2>
+            </div>
+            <div class="sort-filter">
+                <div class="sort-options">
+                    <select>
+                        <option>Cover</option>
+                        <option>Title</option>
+                    </select>
+                </div>
+                <button>Filters</button>
+            </div>
+        </div>
+        <!-- Alphabet Bar -->
+        <div class="alphabet-bar">
+            <span>A</span><span>B</span><span>C</span><span>D</span>
+            <span>E</span><span>F</span><span>G</span><span>H</span>
+            <span>I</span><span>J</span><span>K</span><span>L</span>
+            <span>M</span><span>N</span><span>O</span><span>P</span>
+            <span>Q</span><span>R</span><span>S</span><span>T</span>
+            <span>U</span><span>V</span><span>W</span><span>X</span>
+            <span>Y</span><span>Z</span><span>#</span>
+        </div>
+        <div class="bookshelf-background-container" id="bookshelf-container">
+            <!-- Default Shelf -->
+            <div class="shelf-background">
+                <div class="books" id="book-list-1">
+                    <!-- Books will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+$(document).ready(function () {
+    console.log('hello');
+
+    // Fetch libraries when the page loads
+    fetchLibraries();
+    updateBookshelf();
+
+    // Show the input field when clicking "Create New Library" button
+    $(document).on('click', '#create-library-link', function () {
+        $('#create-library-container').toggle(); // Toggle the input field and button visibility
+    });
+
+    // Handle library creation
+    $('#create-library-btn').click(function () {
+        var libraryName = $('#new-library-name').val().trim();
+
+        if (libraryName) {
+            console.log('Library Name:', libraryName); // Log the library name to verify
+            // the function to create the library (AJAX call will go here)
+            createLibrary(libraryName);
+        } else {
+            alert('Please enter a library name!');
+        }
+    });
+});
+
+
+function fetchLibraries() {
+    $.ajax({
+        url: 'http://localhost:3000/api/libraries', 
+        method: 'GET',
+        success: function (data) {
+            if (data && data.length > 0) {
+                var libraryList = $('#library-list');
+                libraryList.empty();
+                data.forEach(function (library) {
+                    // Make each library a clickable link to the librarypage.html with the library's name as a query parameter
+                    libraryList.append('<li><a href="librarypage.html?library=' + encodeURIComponent(library.name) + '">' + library.name + '</a></li>');
+                });
+            } else {
+                console.log('No libraries found.');
+            }
+        },
+        error: function (error) {
+            console.error('Error fetching libraries:', error);
+        }
+    });
+}
+
+
+function populateLibraryList(libraries) {
+    var libraryList = $('#library-list');
+    libraryList.empty(); // Clear the existing list
+
+    libraries.forEach(function (library) {
+        var listItem = $('<li>').text(library.name);
+        libraryList.append(listItem);
+    });
+}
+
+// Function to create a new library (AJAX request)
+function createLibrary(libraryName) {
+    $.ajax({
+        url: 'http://localhost:3000/api/libraries', 
+        method: 'POST',
+        contentType: 'application/json', 
+        data: JSON.stringify({ name: libraryName }), 
+        success: function (data) {
+            console.log('Library created', data);
+            fetchLibraries(); 
+            $('#new-library-name').val(''); // Clear the input field
+            $('#create-library-container').hide(); // Hide the input field
+        },
+        error: function (error) {
+            console.log('Error creating library:', error);
+        }
+    });
+}
+
+function updateBookshelf() {
+    $.ajax({
+        url: 'http://localhost:3000/api/books',  // Fetch books with only cover_url
+        type: 'GET',
+        success: function(response) {
+            displayBooks(response);  // Pass the response to display the books
+        },
+        error: function(error) {
+            console.error('Error fetching books:', error);
+        }
+    });
+}
+
+function displayBooks(books) {
+    var bookshelfContainer = $('#bookshelf-container');
+    bookshelfContainer.empty();  // Clear any existing shelves
+
+    var shelf = $('<div class="shelf-background"></div>');  // Create the first shelf with a background image
+    var booksContainer = $('<div class="books"></div>');  // This will contain the books for the shelf
+    shelf.append(booksContainer);  // Append the books container to the shelf
+
+    books.forEach(function(book, index) {
+        var bookItem = $('<div class="book-item"></div>');
+        var bookImage = $('<img>').attr('src', book.cover_url || 'default-thumbnail.jpg');  // Handle missing cover URL
+        bookItem.append(bookImage);
+
+        // Create buttons (hidden by default, displayed on hover)
+        var buttons = $('<div class="buttons"></div>');
+        buttons.append('<button class="view-details-btn">View Details</button>');
+        buttons.append('<button class="hide-cover-btn">Hide Cover</button>');
+        bookItem.append(buttons);
+
+        // Add click functionality for the buttons
+        bookItem.find('.view-details-btn').click(function() {
+            window.location.href = "book-details.html?id=" + book.id;  // Redirect to the book details page
+        });
+
+        bookItem.find('.hide-cover-btn').click(function() {
+            bookItem.find('img').toggle();  // Toggle the visibility of the book cover
+        });
+
+        booksContainer.append(bookItem);  // Add the book to the current shelf
+
+        // Check if the shelf has reached the limit (5 books or more)
+        if ((index + 1) % 5 === 0) {
+            bookshelfContainer.append(shelf);
+            
+            // Prepare for the next shelf (a new shelf background)
+            shelf = $('<div class="shelf-background"></div>');  // Create a new shelf with a background image
+            booksContainer = $('<div class="books"></div>');  // Create a new books container for the next shelf
+            shelf.append(booksContainer);  // Append the new books container to the new shelf
+        }
+    });
+
+    // If there are leftover books that didn't fill up the last shelf, add them
+    if (books.length % 5 !== 0) {
+        bookshelfContainer.append(shelf);  // Add the last shelf with the remaining books
+    }
+}
+
+// Functions for the buttons
+function viewBookDetails(bookId) {
+    window.location.href = "book-details.html?id=" + bookId;  // Navigate to the book details page
+}
+function hideBookCover(bookItem) {
+    bookItem.find('img').toggle();  // Toggle visibility of the book cover
+}
+    </script>
+
+</body>
+
 </html>
 

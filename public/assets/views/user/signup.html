@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="/assets/styles/signup.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Left Side (Welcome Text) -->
+        <div class="left-side">
+            <h1>Welcome to Your Library!</h1>
+        </div>
+
+        <!-- Right Side (Sign Up Form) -->
+        <div class="right-side">
+            <form id="signupForm">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+
+                <label for="confirm-password">Confirm Password:</label>
+                <input type="password" id="confirm-password" name="confirm-password" required>
+
+                <label for="remember-me">
+                    <input type="checkbox" id="remember-me" name="remember-me"> Remember Me
+                </label>
+
+                <button type="submit">Sign Up</button>
+            </form>
+
+            <p>Already have an account? <a href="/assets/views/user/login.html">Login here!</a></p>
+            <p>Skip login <a href="/assets/views/main/homepage.html">Skip</a></p>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Handle form submission using jQuery
+            $('#signupForm').submit(function(e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                var email = $('#email').val();
+                var username = $('#username').val();
+                var password = $('#password').val();
+                var confirmPassword = $('#confirm-password').val();
+                var rememberMe = $('#remember-me').prop('checked');
+
+                // Log the data to the console (or send it via AJAX)
+                console.log('Email:', email);
+                console.log('Username:', username);
+                console.log('Password:', password);
+                console.log('Confirm Password:', confirmPassword);
+                console.log('Remember Me:', rememberMe);
+
+                // Check if the passwords match
+                if (password !== confirmPassword) {
+                    alert("Passwords do not match!");
+                    return;
+                }
+
+                // Example of sending the data using AJAX:
+                $.ajax({
+                    url: 'http://localhost:3000/api/signup',  
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        email: email,
+                        username: username,
+                        password: password,
+                        remember_me: rememberMe
+                    }),
+                    success: function(response) {
+                        // Handle the response, such as redirecting to login
+                        console.log('Sign Up successful:', response);
+
+                        // Redirect to login page
+                        window.location.href = '/assets/views/user/login.html';  // Redirect to login page
+                    },
+                    error: function(error) {
+                        // Handle any errors
+                        console.error('Sign Up failed:', error);
+                        alert('Sign-up failed. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

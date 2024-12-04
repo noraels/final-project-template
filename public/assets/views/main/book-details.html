@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    <link rel="stylesheet" href="/assets/styles/book-details.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-image: url('../../images/storybook.png');
+            background-size: 100% 100%;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgb(41, 14, 14);
+        }
+
+        /* Container for the left and right sections */
+        .container {
+            display: flex;
+            width: 80%;
+            height: 80%;
+            max-width: 1200px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Left side with the synopsis, publish date, and genre */
+        .left-side {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding-right: 20px;
+            color: #460012;
+            font-size: 20px;
+            text-align: left;
+            padding: 10px;
+        }
+
+        .book-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        /* Right side with the title, thumbnail, rating, and review */
+        .right-side {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            background: rgba(111, 76, 76, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            font-size: 30px;
+        }
+
+        .right-side h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            color: #fff;
+        }
+
+        .right-side img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        #book-rating {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        #star-rating {
+            display: flex;
+            font-size: 3rem;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+        .star {
+            margin: 0 5px;
+        }
+
+        .star.selected {
+            color: #ffcc00; 
+        }
+
+        .star:hover {
+            color: #ffcc00; 
+        }
+
+        /* Review section */
+        #review-container {
+            margin-top: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #review-text {
+            width: 80%;
+            padding: 10px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            color: black;
+        }
+
+        #submit-review-btn {
+            padding: 10px;
+            background-color: #460012;
+            color: white;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #submit-review-btn:hover {
+            background-color: #690022;
+        }
+
+        #review-text-display {
+            margin-top: 20px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Left side (Synopsis, Publish Date, Genre) -->
+        <div class="left-side">
+            <p><strong>Synopsis:</strong> <span id="book-synopsis"></span></p>
+            <div class="book-info">
+                <p><strong>Published Date:</strong> <span id="book-published-date"></span></p>
+                <p><strong>Genre:</strong> <span id="book-genre"></span></p>
+            </div>
+        </div>
+    
+        <!-- Right side (Title, Thumbnail, Rating, Review) -->
+        <div class="right-side">
+            <h2 id="book-title"></h2>
+            <img id="book-thumbnail" alt="Book Thumbnail" />
+            <div id="book-rating"></div>
+            <button id="leave-review-btn">Leave a Review</button>
+            <div id="review-container" style="display: none;">
+                <textarea id="review-text" placeholder="Write your review..."></textarea>
+                <button id="submit-review-btn">Submit Review</button>
+            </div>
+
+            <!-- Display review if exists -->
+            <div id="review-text-display"></div>
+    
+            <!-- Rating Section -->
+            <div id="rating-container">
+                <div id="star-rating">
+                    <span class="star" data-value="1">&#9733;</span>
+                    <span class="star" data-value="2">&#9733;</span>
+                    <span class="star" data-value="3">&#9733;</span>
+                    <span class="star" data-value="4">&#9733;</span>
+                    <span class="star" data-value="5">&#9733;</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    $(document).ready(function() {
+        // Get the bookId from the URL query string
+        var bookId = new URLSearchParams(window.location.search).get('id');
+
+        // If a bookId is provided, fetch the book details
+        if (bookId) {
+            fetchBookDetails(bookId);
+        } else {
+            alert('Book ID is missing in the URL!');
+        }
+
+        // Leave a review button functionality
+        $('#leave-review-btn').click(function() {
+            $(this).hide();  // Hide the "Leave a Review" button
+            $('#review-container').show();  // Show the review text box and submit button
+        });
+
+        // Submit review functionality
+        $('#submit-review-btn').click(function() {
+            var reviewText = $('#review-text').val();
+            if (reviewText) {
+                $('#book-rating').hide();  // Hide the rating section
+                $('#review-container').hide();  // Hide the review text box and submit button
+                // Display the review below the form
+                $('#review-text-display').text(reviewText);
+                // Save review in localStorage using bookId as the key
+                localStorage.setItem('review_' + bookId, reviewText);
+            } else {
+                alert('Please write a review before submitting.');
+            }
+        });
+
+        // Load saved review from localStorage
+        if (localStorage.getItem('review_' + bookId)) {
+            var savedReview = localStorage.getItem('review_' + bookId);
+            $('#review-text-display').text(savedReview);
+            $('#leave-review-btn').hide();  // Hide the "Leave a Review" button if there's already a review
+            $('#review-container').hide();  // Hide the review container if there's already a review
+        }
+
+        // Load saved rating from localStorage
+        if (localStorage.getItem('bookRating_' + bookId)) {
+            var savedRating = localStorage.getItem('bookRating_' + bookId);
+            setRatingStars(savedRating);
+        }
+
+    });
+
+    function fetchBookDetails(bookId) {
+        $.ajax({
+            url: 'http://localhost:3000/api/books',  
+            type: 'GET',
+            success: function(response) {
+                console.log(response);  // Log the full response to debug
+                if (response && Array.isArray(response)) {
+                    // Find the book that matches the passed bookId
+                    var book = response.find(book => book.id == bookId);  // Match the book by id
+                    if (book) {
+                        displayBookDetails(book);  // Display the book details
+                    } else {
+                        alert('Book not found in the database');
+                    }
+                } else {
+                    alert('Invalid response format');
+                }
+            },
+            error: function(error) {
+                console.error('Error fetching book details:', error);
+                alert('There was an error fetching the book details.');
+            }
+        });
+    }
+
+    function displayBookDetails(book) {
+        var thumbnail = book.cover_url || 'default-thumbnail.jpg';
+        $('#book-thumbnail').attr('src', thumbnail);
+
+        var title = book.title || 'No title available';
+        $('#book-title').text(title);
+
+        var authors = book.author || 'Unknown author';
+        $('#book-author').text('By: ' + authors);
+
+        var genre = book.genre || 'No genre available';
+        $('#book-genre').text(genre);
+
+        var publishedDate = book.published_date || 'No date available';
+        $('#book-published-date').text(publishedDate);
+
+        var synopsis = book.synopsis || 'No description available';
+        $('#book-synopsis').text(synopsis);
+
+        // If there's no rating, leave the stars empty
+        var averageRating = book.rating || '';
+        if (averageRating) {
+            $('#book-rating').text('Rating: ' + averageRating);
+            setRatingStars(averageRating); // Set stars according to the rating
+        } else {
+            $('#book-rating').text('');
+        }
+
+        // Set up the rating functionality
+        setupRatingButton(book.id);
+    }
+
+    function setRatingStars(ratingValue) {
+        // Fill stars based on the rating value
+        $('#star-rating .star').each(function() {
+            if ($(this).data('value') <= ratingValue) {
+                $(this).addClass('selected');
+            } else {
+                $(this).removeClass('selected');
+            }
+        });
+    }
+
+    function setupRatingButton(bookId) {
+        // Ensure that the stars are visible when the page loads
+        $('#star-rating').show();
+
+        // Handle hover effect for the stars
+        $('.star').hover(
+            function() {
+                // On mouseover, highlight the stars up to the hovered star
+                var value = $(this).data('value');
+                $('.star').each(function() {
+                    if ($(this).data('value') <= value) {
+                        $(this).css('color', '#ffcc00');  // Highlight star
+                    } else {
+                        $(this).css('color', '#ccc');  // Reset star color
+                    }
+                });
+            },
+            function() {
+                // Reset star color when mouse leaves
+                if (!$(this).hasClass('selected')) {
+                    $('.star').css('color', '#ccc');
+                }
+            }
+        );
+
+        // Handle click to set the rating and submit immediately
+        $('.star').click(function() {
+            var ratingValue = $(this).data('value');
+            setRatingStars(ratingValue);  // Update the star appearance
+
+            // Save the rating in localStorage using bookId as the key
+            localStorage.setItem('bookRating_' + bookId, ratingValue);
+        });
+    }
+    </script>
+
+</body>
+</html>
+
+

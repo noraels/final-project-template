@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/assets/styles/login.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Left Side (Welcome Text) -->
+        <div class="left-side">
+            <h1>Welcome to Your Library!</h1>
+        </div>
+
+        <!-- Right Side (Login Form) -->
+        <div class="right-side">
+            <form id="loginForm">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+
+                <label for="remember-me">
+                    <input type="checkbox" id="remember-me" name="remember-me"> Remember Me
+                </label>            
+
+                <button type="submit">Login</button>
+            </form>
+
+            <p>Don't have an account? <a href="/assets/views/user/signup.html">Sign up here!</a></p>
+            <p>Skip login <a href="/assets/views/main/homepage.html">Skip</a></p>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Handle form submission using jQuery
+            $('#loginForm').submit(function(e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                var username = $('#username').val();
+                var password = $('#password').val();
+                var rememberMe = $('#remember-me').prop('checked');
+
+                // Log the data to the console (or send it via AJAX)
+                console.log('Username:', username);
+                console.log('Password:', password);
+                console.log('Remember Me:', rememberMe);
+
+                // Example of sending the data using AJAX:
+                $.ajax({
+                    url: 'http://localhost:3000/api/login',  
+                    method: 'POST',
+                    data: {
+                        username: username,
+                        password: password,
+                        remember_me: rememberMe
+                    },
+                    success: function(response) {
+                        // Handle the response, such as redirecting to another page
+                        console.log('Login successful:', response);
+
+                        // Redirect to homepage
+                        window.location.href = '/assets/views/main/homepage.html';  // Redirect to homepage
+                    },
+                    error: function(error) {
+                        // Handle any errors
+                        console.error('Login failed:', error);
+                        alert('Invalid login credentials');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
